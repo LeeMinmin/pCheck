@@ -3,12 +3,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
-    
+    <!-- 
     <RadioButton 
         android:id="@+id/rbutton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
-    
+     -->
     <ImageView
         android:id="@+id/appImage"
         android:layout_width="60px"

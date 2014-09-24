@@ -2,16 +2,28 @@
 <LinearLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/LinearLayoutMain"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="bottom|center_horizontal|center_vertical">    
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom|center_horizontal|center_vertical"
+    android:orientation="vertical">    
+    
+    <TextView
+        android:text="Please choose one app to start"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp" 
+        android:layout_marginTop="10dp"
+        android:id="@+id/TestView01"
+        android:textStyle="bold"
+        />
+    
     
     <ListView 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ListView01"
-        android:layout_weight="1"/>
-    
+        android:layout_weight="1"        
+        />
+  <!-- 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="78dp"
@@ -27,5 +39,7 @@
             android:gravity="center_horizontal"
             android:text="@string/startTest"
             />
+  
     </LinearLayout>
+     -->  
 </LinearLayout>

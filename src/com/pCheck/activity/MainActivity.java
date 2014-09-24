@@ -8,7 +8,11 @@ import com.pCheck.util.AppInfo;
 import com.pCheck.util.ViewHolder;
 
 import android.support.v7.app.ActionBarActivity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -20,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,27 +34,45 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 	private List<PackageInfo> pinfo = new ArrayList<PackageInfo>();
 	private List<AppInfo> appInfo = new ArrayList();
 	private ListView appListView;
-	private Button startTest;
+	//private Button startTest;
 	private boolean isRadioChecked = false;
 	private int tempPositon = -1;
+	private Context context = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		appListView = (ListView)findViewById(R.id.ListView01);
-		startTest = (Button)findViewById(R.id.test);
-		startTest.setOnClickListener(new OnClickListener(){
-			public void onClick(View v){
+		appListView.setAdapter(new ListAdapter(this));
+		appListView.setOnItemClickListener(new OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					final int position, long id) {
+				// TODO Auto-generated method stub
+				Builder dialog = new AlertDialog.Builder(context);
+				dialog.setMessage("确定启动该程序:"+appInfo.get(position).getAppText()+"?");
+				dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						String packageName = appInfo.get(position).getAppPackage();
+						startApp(packageName);
+					}
 				
+				});
+				dialog.setNegativeButton("取消", null);
+				dialog.show();
 			}
 		});
-		appListView.setAdapter(new ListAdapter(this));
 		appListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 	}
 
@@ -71,6 +95,14 @@ public class MainActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private void startApp(String packageName){
+		try{
+			Intent intent = this.getPackageManager().getLaunchIntentForPackage(packageName);
+			startActivity(intent);
+		}catch(Exception ex){
+			Toast.makeText(this, "没有安装", Toast.LENGTH_LONG).show();
+		}
+	}
 	
 	private class ListAdapter extends BaseAdapter{
 		List<View> itemViews;
@@ -93,25 +125,7 @@ public class MainActivity extends ActionBarActivity {
 				}
 			}
 		}
-		/*
-		private View makeItemView(Drawable resImg, String text){
-			LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
-			View item = inflater.inflate(R.layout.list_app, null);
-			RadioButton rb = (RadioButton)item.findViewById(R.id.rbutton);
-			TextView appText = (TextView)item.findViewById(R.id.appText);
-			appText.setText(text);
-			ImageView appImg = (ImageView)item.findViewById(R.id.appImage);
-			appImg.setImageDrawable(resImg);
-			rb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-					if(isChecked){
-						isRadioChecked = true;						
-					}
-				}
-			});
-			return item;
-		}
-		*/
+		
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
@@ -142,22 +156,13 @@ public class MainActivity extends ActionBarActivity {
 				holder = new ViewHolder();
 				holder.app_text = (TextView) convertView.findViewById(R.id.appText);
 				holder.app_img = (ImageView) convertView.findViewById(R.id.appImage);
-				holder.app_radio = (RadioButton) convertView.findViewById(R.id.rbutton);
+				//holder.app_radio = (RadioButton) convertView.findViewById(R.id.rbutton);
 				convertView.setTag(holder);
 			}else{
 				holder = (ViewHolder)convertView.getTag();
 			}			
 			holder.app_text.setText(appInfo.get(position).getAppText());
 			holder.app_img.setImageDrawable(appInfo.get(position).getAppImg());
-			holder.app_radio.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					// TODO Auto-generated method stub
-					isRadioChecked = true;
-					tempPositon = position;
-				}
-			});
 			return convertView;
 		}
 	}
